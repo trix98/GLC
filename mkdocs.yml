@@ -1,0 +1,33 @@
+site_name: "GgmLipidClassifier Docs"
+
+theme: 
+  name: material
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      locale: en
+      handlers:
+        python:
+          options:
+            show_source: true        # your current setting
+            show_signature: true     # <--- add this line
+            show_root_heading: true  # optional: show module/class name as a heading
+            extra:
+              show_private_members: true
+              show_dunder_methods: true
+       
+nav:
+  - GLC: index.md
+  - Tutorials: 
+    - Quick Start: quick_start.md
+    - Full Workflow: full_workflow.md
+  - API References:
+    - Loading Data: api_references/data_loading.md
+    - GGM: api_references/ggm.md
+    - GLC: api_references/glc.md
+    - GGM UMAP: api_references/ggm_umap.md
+    - MZ Peak Picking: api_references/mz_peak_picking.md
+    - Database Mapping: api_references/database_mapping.md
+    - Ground Truth Validation: api_references/ground_truth_validation.md
