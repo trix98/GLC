@@ -2,13 +2,13 @@
 __pycache__/
 *.py[oc]
 build/
-dist/
+#dist/
 wheels/
 *.egg-info
 
 # Virtual environments
 .venv
 
-.pckg_notebooks
+pckg_notebooks
 
 .uv

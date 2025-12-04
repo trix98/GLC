@@ -44,9 +44,9 @@ class FeatDicts:
         )
 
 def load_lm_database() -> pd.DataFrame:
-    """Load the LIPID MAPS Structural Database (LMSD) from a packaged CSV file.
+    """Load the LIPID MAPS Structural Database (LMSD) from a packaged parquet file.
 
-    The function reads the file `lipid_maps_database.csv` located in the
+    The function reads the file `lipid_maps_database.parquet` located in the
     package's `data` directory and returns it as a pandas DataFrame. Any
     missing values in the `SUB_CLASS` column are filled with the
     corresponding entries from the `MAIN_CLASS` column.
@@ -57,9 +57,10 @@ def load_lm_database() -> pd.DataFrame:
     # Import the package where the resource is located
     from . import data
 
-    # Use importlib.resources to access the CSV file
-    with resources.open_text(data, 'lipid_maps_database.csv') as f:
-        lm_df = pd.read_csv(f)
+    # Use importlib.resources to access the parquet file
+    # with resources.open_text(data, 'lipid_maps_database.parquet') as f:
+    #     lm_df = pd.read_parquet(f)
+    lm_df = pd.read_parquet(resources.files(data) / 'lipid_maps_database.parquet')
 
     # Fill NaN in 'SUB_CLASS' with values from 'MAIN_CLASS'
     lm_df['SUB_CLASS'] = lm_df['SUB_CLASS'].fillna(lm_df['MAIN_CLASS'])
@@ -71,7 +72,7 @@ class LoadExampleData:
     """Load example data files for the AddNeuroMed-LPOS lipidomics dataset for use in tutorials. 
 
     This class provides convenient access to packaged example data files
-    included with the library. When instantiated, it loads CSV files needed GLC analyses.
+    included with the library. When instantiated, it loads parquet files needed GLC analyses.
     files:
 
     - A feature table with metabolite intensities, retention times, and m/z values
@@ -88,26 +89,25 @@ class LoadExampleData:
         self._data = data
         
         # feature table
-        self.feat_table = self._load_csv("example_feature_table_addneuromed_lpos.csv")
+        self.feat_table = self._load_parquet("example_feature_table_addneuromed_lpos.parquet")
 
         # ggm adjacency matrix
-        ggm = self._load_csv("example_ggm_addneuromed_lpos.csv")
+        ggm = self._load_parquet("example_ggm_addneuromed_lpos.parquet")
         ggm = ggm.set_index(ggm.columns[0]) # index should be peak IDs
         ggm.index.name = 'peak_id'
         self.ggm = ggm
 
         # ground truth annotations 
-        self.ground_truth = self._load_csv("example_ground_truth_addneuromed_lpos.csv")
+        self.ground_truth = self._load_parquet("example_ground_truth_addneuromed_lpos.parquet")
 
-    def _load_csv(self, filename):
-        """Load a CSV file stored inside the package resources.
+    def _load_parquet(self, filename):
+        """Load a Parquet file stored inside the package resources.
 
         Args:
-            filename (str): Name of the CSV file inside the package's data directory.
-
+            filename (str): Name of the Parquet file inside the package's data directory.
         Returns:
-            pandas.DataFrame: The parsed CSV file as a DataFrame.
+            pandas.DataFrame: The parsed Parquet file as a DataFrame.
         """
-        return pd.read_csv(resources.files(self._data) / filename)
+        return pd.read_parquet(resources.files(self._data) / filename)
 
 
