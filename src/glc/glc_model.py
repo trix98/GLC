@@ -229,3 +229,57 @@ class GLCModel:
             ]
 
         return output_dict
+
+
+def build_prediction_dataframe(
+    subclass_predictions: Dict[int, List[Tuple[str, float]]],
+    mainclass_predictions: Dict[int, List[Tuple[str, float]]],
+    quality_score_df: pd.DataFrame,
+    feat_dicts: FeatDicts
+) -> pd.DataFrame:
+    """
+    Build a tidy DataFrame summarizing GLC subclass and main class predictions
+    together with feature metadata and quality scores.
+
+    Args:
+        subclass_predictions:
+            Dictionary mapping peak_id to a list of subclass predictions.
+            Each entry is expected to be a ranked list, where the top prediction
+            is accessed as subclass_predictions'[peak_id][0][0]'.
+        mainclass_predictions:
+            Dictionary mapping peak_id to a list of main class predictions,
+            structured analogously to subclass_predictions.
+        quality_score_df:
+            DataFrame indexed by peak_id containing quality score columns
+             'lsi_score', 'pcor_score', and 'product_score'.
+        feat_dicts:
+            A glc.FeatDicts object providing dictionary-like access to
+            feature m/z and retention time via feat_dicts.mz and feat_dicts.rt.
+
+    Returns:
+        pd.DataFrame:
+            A DataFrame with one row per peak_id containing feature metadata,
+            predicted subclass and main class, and associated quality scores.
+    """
+    results = []
+
+    for peak_id in subclass_predictions.keys():
+        if not subclass_predictions[peak_id]:
+            scl_p = np.nan
+            mcl_p = np.nan
+        else:
+            scl_p = subclass_predictions[peak_id][0][0]
+            mcl_p = mainclass_predictions[peak_id][0][0]
+
+        results.append({
+            'peak_id': peak_id,
+            'mz': feat_dicts.mz[peak_id],
+            'rt': feat_dicts.rt[peak_id],
+            'subclass': scl_p,
+            'mainclass': mcl_p,
+            'lsi_score': quality_score_df['lsi_score'].get(peak_id, np.nan),
+            'pcor_score': quality_score_df['pcor_score'].get(peak_id, np.nan),
+            'product_score': quality_score_df['product_score'].get(peak_id, np.nan),
+        })
+
+    return pd.DataFrame(results)

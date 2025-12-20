@@ -425,30 +425,6 @@ class UMAPPlots:
         return ax
 
 
-    """
-    Test if nearest-neighbor matches in a UMAP embedding are enriched
-    for shared class labels beyond random expectation.
-    Can be used to evaluate just annotations, or for GLC predictions. 
-    Based on the method outlined by Chen et al. https://doi.org/10.1038/s41467-024-46089-y
-
-
-    Attributes:
-        X (np.ndarray): Embedding coordinates of shape (n annotations/predictions, m UMAP dims).
-        y (np.ndarray): Class labels of length n annotations/predictions
-        labels (np.ndarray): Unique class labels.
-        n (int): Number of annotations/predictions
-        class_counts (Dict[Any, float]): class proportion in dataset.
-        nn_portions (Dict[Any, float]): class normalized NN match rate.
-        ses (Dict[Any, float]): class standard error for nn_portions.
-    """
-
-from sklearn.neighbors import NearestNeighbors
-from scipy.stats import norm
-import numpy as np
-import pandas as pd
-from typing import Any, Tuple, Optional, Dict
-
-
 
 class EmbStats:
     """

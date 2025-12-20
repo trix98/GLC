@@ -397,8 +397,8 @@ class MzPeakLookup:
         self._data = data
 
         # Load Dunn rule definitions
-        filename = 'esi_mass_differences.csv'
-        self.rule_df = pd.read_csv(resources.files(self._data) / filename)
+        filename = 'esi_mass_differences.parquet'
+        self.rule_df = pd.read_parquet(resources.files(self._data) / filename)
 
     def _find_matching_intervals(
         self, mz_theoretical: float, intervals: pd.IntervalIndex

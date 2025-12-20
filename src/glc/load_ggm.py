@@ -1,7 +1,11 @@
 import pandas as pd
 import numpy as np
 import networkx as nx
-from typing import Dict, Union
+from typing import Dict, Union, List
+
+from rpy2 import robjects
+from rpy2.robjects import default_converter, numpy2ri
+from rpy2.robjects.conversion import localconverter
 
 
 class GGM:
@@ -73,7 +77,7 @@ class GGM:
         connected_components = list(nx.connected_components(G))
         main_component = max(connected_components, key=len)
         main_subgraph = G.subgraph(main_component)
-        print(len(list(main_subgraph.nodes())))
+        print(f'# features in GGM main subgraph: {len(list(main_subgraph.nodes()))} out of {len(list(G.nodes()))}')
         return main_subgraph
 
     def _to_graph(self) -> nx.Graph:
@@ -87,11 +91,7 @@ class GGM:
         """
         G = nx.from_numpy_array(np.abs(self.adj_mx), create_using=nx.Graph())
         mapping = {i: name for i, name in enumerate(self.feat_labels)}
-
-        print(len(list(G.nodes())))
         G = nx.relabel_nodes(G, mapping)
-
-        print("All nodes")
         G = self._get_main_subgraph(G)
         return G
 
@@ -112,3 +112,83 @@ class GGM:
                     key = f"{self.feat_labels[i]}::{self.feat_labels[j]}"
                     pcor_dict[key] = abs(self.adj_mx[i, j])
         return pcor_dict
+
+
+class EstGGM:
+    """
+    A wrapper class to estimate Gaussian Graphical Models (GGM) from feature table intensities
+    using the GeneNet package in R.
+
+    Attributes:
+        int_array (np.ndarray): Preprocessed intensity data as a 2D numpy array (features x samples).
+        feat_labels (List[str]): List of feature labels corresponding to rows in int_array.
+        alpha (float): Significance level for edge extraction in the GGM.
+    """
+
+    def __init__(self, int_array: np.ndarray, feat_labels: List[str], alpha: float = 0.05) -> None:
+        """
+        Initialize the EstGGM class with preprocessed intensity data and feature labels.
+
+        Args:
+            int_array (np.ndarray): Preprocessed intensity data (features x samples).
+            feat_labels (List[str]): Feature labels corresponding to int_array rows.
+            alpha (float, optional): Significance level for edge extraction in the GGM. Defaults to 0.05.
+
+        Raises:
+            ValueError: If the number of rows in int_array does not match the length of feat_labels.
+        """
+        self.int_array: np.ndarray = int_array
+        self.feat_labels: List[str] = feat_labels
+        self.alpha: float = alpha
+
+        if int_array.shape[0] != len(feat_labels):
+            raise ValueError("Number of rows in int_array must match length of feat_labels.")
+
+    def run_ggm(self) -> pd.DataFrame:
+        """
+        Estimate the Gaussian Graphical Model using GeneNet in R 
+
+        Returns:
+            pd.DataFrame: Symmetric adjacency matrix of partial correlations between features.
+        """
+        r = robjects.r
+
+        # Assign intensity data to R using local converter
+        with localconverter(default_converter + numpy2ri.converter):
+            r.assign("int_array", self.int_array)
+
+        # R script for GGM estimation
+        r_script = f'''
+            library(GeneNet)
+            set.seed(42)
+            
+            features <- as.matrix(int_array)
+            
+            ggm <- ggm.estimate.pcor(t(features))
+            edge.list <- network.test.edges(ggm, plot = FALSE)
+            network.edges.sign <- extract.network(edge.list, method.ggm="qval", cutoff.ggm={self.alpha})
+            
+            adj_matrix <- matrix(0, nrow = dim(features)[1], ncol = dim(features)[1])
+            for(i in 1:nrow(network.edges.sign)) {{
+                ids <- as.integer(network.edges.sign[i, c("node1","node2")])
+                adj_matrix[ids[1], ids[2]] <- adj_matrix[ids[2], ids[1]] <- network.edges.sign[i,"pcor"]
+            }}
+            
+            adj_matrix
+        '''
+
+        # Execute R script
+        adj_matrix_r = r(r_script)
+
+        # Convert R matrix to numpy using local converter
+        with localconverter(default_converter + numpy2ri.converter):
+            adj_matrix_np: np.ndarray = np.array(adj_matrix_r)
+
+        # Convert to DataFrame with feature labels
+        ggm_df: pd.DataFrame = pd.DataFrame(
+            adj_matrix_np,
+            index=self.feat_labels,
+            columns=self.feat_labels
+        )
+
+        return ggm_df

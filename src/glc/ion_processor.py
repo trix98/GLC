@@ -495,7 +495,7 @@ def map_ungrouped_feature_table(
         esi_df: Optional[pd.DataFrame] = None,
         mz_peak_picker_obj: Optional[bool] = None,
         c13_adjustment: Optional[bool] = False,
-        logp_filter_tresh: Optional[float] = None
+        logp_filter_thresh: Optional[float] = None
 ) -> Dict[str, List[str]]:
     """
     Map ungrouped features to candidate lipid IDs based on accurate mass matching, with optional
@@ -544,7 +544,7 @@ def map_ungrouped_feature_table(
             Whether to run isotopic correction using ``AdjustForC13``.
             Requires ``mz_peak_picker_obj``. Defaults to ``False``.
 
-        logp_filter_tresh (float, optional):
+        logp_filter_thresh (float, optional):
             If provided, filters mapped lipid candidates based on predicted
             logP values, retaining only those within ``n_stds`` standard deviations of the monotonic regression of LogP and rt.
 
@@ -619,13 +619,66 @@ def map_ungrouped_feature_table(
         )
         feat2lmids = adjuster.run()
     
-    if logp_filter_tresh is not None:
+    if logp_filter_thresh is not None:
         feat2lmids = filter_by_logp(
             feat2lmids=feat2lmids,
             lm_df=db,
-            n_stds=logp_filter_tresh,
+            n_stds=logp_filter_thresh,
             feat_dicts=feat_dicts,
             return_df=False
         )
 
     return feat2lmids
+
+
+def map_grouped_feature_table(
+        db: pd.DataFrame,
+        feat_dicts: FeatDicts,
+        ppm_interval: int = 10,
+        logp_filter_thresh: Optional[float] = None
+) -> Dict[str, List[str]]:
+    
+    # TODO add docstring
+    
+    features_data = []
+    for feat, mz in feat_dicts.mz.items():
+        ppm_value = (ppm_interval / 1_000_000) * mz
+        ppm_min, ppm_max = (mz - ppm_value, mz+ ppm_value)
+
+        features_data.append({
+            'feat': feat,
+            'ppm_min': ppm_min,
+            'ppm_max': ppm_max
+        })
+
+    # Create a DataFrame from the features data
+    features_df = pd.DataFrame(features_data)
+
+    # Extract LM_IDs and EXACT_MASS values for vectorized operations
+    lm_ids = db['LM_ID'].values
+    exact_masses = db['EXACT_MASS'].values
+
+    # Iterate over each lipid mass
+    feat2lmids = defaultdict(list)
+    for lm_id, exact_mass in tqdm(zip(lm_ids, exact_masses), total=len(lm_ids)):
+        # Vectorized range check for the current exact_mass
+        mask = (features_df['ppm_min'] <= exact_mass) & (exact_mass <= features_df['ppm_max'])
+
+        # Get matching features
+        matching_feats = features_df.loc[mask, 'feat'].values
+
+        # Append lm_id to each matching feature
+        for feat in matching_feats:
+            feat2lmids[feat].append(lm_id)
+
+    if logp_filter_thresh is not None:
+        feat2lmids = filter_by_logp(
+            feat2lmids=feat2lmids,
+            lm_df=db,
+            n_stds=logp_filter_thresh,
+            feat_dicts=feat_dicts,
+            return_df=False
+        )
+
+    return feat2lmids
+

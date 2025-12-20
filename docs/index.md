@@ -1,54 +1,21 @@
-![GLC_logo](./images/package_logo.jpg)
+# GgmLipidClassifier (glc)
 
-Tabs to pypi package and license ... 
+<div style="text-align: center;">
+    <img src="./images/glc_logo.png" alt="GLC_logo">
+</div>
 
-GLC is a Python framework designed for ... [short snappy paragraph for what its about]
+
+GgmLipidClassifier (GLC) is an open-source Python package designed to systematically predict lipid class directly from MS1-only data in untargeted liquid chromatography–mass spectrometry (LC–MS) lipidomic workflows. GLC integrates accurate-mass database searching with Gaussian graphical models (GGM) estimated from feature intensities to predict lipid subclass and main class according to the LIPID MAPS Structural Database (LMSD) ontology. Requiring just a feature table, GLC predicts lipid class for most detected features without requiring MS2 or prior annotations.
 
 ## Overview
-### Features 
-- Predict lipid class
-- Quality scores 
-- ...
 
 ### Sources and Materials 
-The package source code is accessible via GitHub at [insert Github address]
-
-Training materials including example data can be found at [insert link to tutorial]
+The package source code is accessible via GitHub at: 
 
 # Installation 
-## Dependencies 
-
-[Copy dependencies from final .toml file]
-
-## User Installation 
-
-TODO: Don't forget stuff about having R installed on your system
-
-### Installing with Pip
 You can install GLC from PyPI using pip:
 ```bash
-pip install glc
-```
-
-### Installing from source-code
-You can install GLC from source code given you have installed ...
-
-First, clone the respository from GitHub to your computer. You can use the following commands if you have a version of Git installed on your computer:
-
-```bash
-git clone [insert URL]
-cd glc
-```
-When you are in the cloned project folder, type the foolowing code to install GLC and all dependencies:
-
-```pip install .```
-
-**Alternatively**, you can install dependencies using pip and GLC using Python: 
-
-TODO: don't forget to generate a requirements file for this
-```bash
-pip install -r requirements.txt
-python setup.py develop
+pip install ggmlipidclassifier
 ```
 
 # Issues and Colloboration
@@ -57,33 +24,28 @@ Thank you for supporting the GLC project. GLC is an open-source software and wel
 ## Issues
 Please submit any bugs or issues via the project's GitHub [link to issue page] issue page include any details about the (glc.__version__) together with any relevant input data/metadata. 
 
-## Colloboration 
-
 ## Pull requests
 You can actively colloborate on the GLC package by submitting any changes via a pull request. All pull requests will be reviewed by the GLC team and merged in due course. 
 
 ## Contributions
-If you would like to become a contibuter on the GLC project, please contact [link to contact info] Thomas Rix. 
+If you would like to become a contibuter on the GLC project, please contact Thomas Rix at tir21@ic.ac.uk 
 
 # Acknowledgment 
-This package was developed as part of Thomas Rix's PhD project at Imperial College London, funded by [HUMAN GRANT STUFF]. It is free to use, published under BSD 3-Clause licence. 
+This package was developed as part of Thomas Rix's PhD project at Imperial College London, supported by the European Union project
+HUMAN (grant EC101073062, UKRI EP/X035840/1). It is free to use, published under BSD 3-Clause licence. 
 
-Other acknwledgments. 
+The authors gratefully acknowledge Prof Simon Lovestone for permission to use the AddNeuroMed dataset.   
+Dr María Gómez-Romero for help with dataset pre-processing.   
+René Neuhaus and Sara Martínez for their support on the data treatment of the metformin-HIIE dataset.  
 
 # Citing us
-If you use GLC in a scientific publication, we would appreciate citations. 
-
-## Release
-[Add reference to the paper one day]
+If you found this package useful, please consider citing us. 
 
 ## Publication 
+The article is currently in the process of journal submission. 
 
-# References
 
-# Version History
 
-## v.1.0.0
-**Initial Release**
 
 
 

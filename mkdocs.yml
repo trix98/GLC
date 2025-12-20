@@ -5,6 +5,7 @@ theme:
 
 plugins:
   - search
+  - mkdocs-jupyter
   - mkdocstrings:
       default_handler: python
       locale: en
@@ -21,12 +22,14 @@ plugins:
 nav:
   - GLC: index.md
   - Tutorials: 
-    - Quick Start: quick_start.md
-    - Full Workflow: full_workflow.md
+    - Quick Start: quickstart.ipynb
+    - Tutorial 2: tutorial_2.ipynb
+    - GGM Estimation: ggm_est.ipynb
   - API References:
     - Loading Data: api_references/data_loading.md
     - GGM: api_references/ggm.md
     - GLC: api_references/glc.md
+    - Quality Scores: api_references/quality_scores.md
     - GGM UMAP: api_references/ggm_umap.md
     - MZ Peak Picking: api_references/mz_peak_picking.md
     - Database Mapping: api_references/database_mapping.md
