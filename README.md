@@ -11,6 +11,7 @@ GgmLipidClassifier (GLC) is an open-source Python package designed to systematic
 ## Overview
 
 ### Sources and Materials 
+Documentation is avaliable on our [Read the Docs page](https://trix98.github.io/GLC/)
 The package source code is accessible via GitHub at: https://github.com/trix98/GLC
 
 # Installation 
