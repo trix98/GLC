@@ -10,7 +10,8 @@ GgmLipidClassifier (GLC) is an open-source Python package designed to systematic
 ## Overview
 
 ### Sources and Materials 
-The package source code is accessible via GitHub at: 
+
+The package source code is accessible via GitHub at: https://github.com/trix98/GLC
 
 # Installation 
 You can install GLC from PyPI using pip:
@@ -22,7 +23,7 @@ pip install ggmlipidclassifier
 Thank you for supporting the GLC project. GLC is an open-source software and welcomes any form of contribution and support.
 
 ## Issues
-Please submit any bugs or issues via the project's GitHub [link to issue page] issue page include any details about the (glc.__version__) together with any relevant input data/metadata. 
+Please submit any bugs or issues via the project's [GitHub](https://github.com/trix98/GLC) issue page include any details about the (glc.__version__) together with any relevant input data/metadata. 
 
 ## Pull requests
 You can actively colloborate on the GLC package by submitting any changes via a pull request. All pull requests will be reviewed by the GLC team and merged in due course. 
