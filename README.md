@@ -6,7 +6,7 @@
 
 
 
-GgmLipidClassifier (GLC) is an open-source Python package designed to systematically predict lipid class directly from MS1-only data in untargeted liquid chromatography–mass spectrometry (LC–MS) lipidomic workflows. GLC integrates accurate-mass database searching with Gaussian graphical models (GGM) estimated from feature intensities to predict lipid subclass and main class according to the LIPID MAPS Structural Database (LMSD) ontology. Requiring just a feature table, GLC predicts lipid class for most detected features without requiring MS2 or prior annotations.
+GgmLipidClassifier (GLC) is an open-source Python package designed to systematically predict lipid class directly from MS1-only data in untargeted liquid chromatography–mass spectrometry (LC–MS) lipidomic workflows. GLC integrates accurate-mass database searching with Gaussian graphical models (GGM) estimated from feature intensities to predict lipid subclass and main class according to the LIPID MAPS Structural Database (LMSD) ontology. Requiring just a feature table, GLC predicts lipid class for most detected features and does not require prior annotation or MS2 for prediction. 
 
 ## Overview
 
